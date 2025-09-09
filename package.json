@@ -34,6 +34,12 @@
         "nsis"
       ]
     },
+    "extraResources": [
+    {
+      "from": "out",
+      "to": "out"
+    }
+  ],
     "nsis": {
       "oneClick": false,
       "perMachine": false
