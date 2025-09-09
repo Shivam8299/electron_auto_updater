@@ -18,6 +18,9 @@ function createWindow() {
   });
 
   if (isDev) {
+    const indexPath = path.join(__dirname, "out", "index.html");
+  console.log("Loading:", indexPath);
+  win.loadFile(indexPath);
     // Dev mode: start Next.js server automatically
     const nextProcess = spawn("npm", ["run", "dev:web"], { shell: true });
 
