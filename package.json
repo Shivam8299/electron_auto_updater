@@ -1,7 +1,7 @@
 {
   "name": "electron_updater",
   "main": "main.js",
-  "version": "0.3.2",
+  "version": "0.3.4",
   "description": "Electron + Next.js app with auto-updater",
   "author": "Shivam Mishra",
   "private": true,
@@ -19,28 +19,19 @@
     "appId": "shivam.myapp",
     "productName": "MyApp",
     "files": [
-      "out/**/*",
-      "preload.js", 
+      ".next/**/*",
+      "public/**/*",
+      "preload.js",
       "main.js",
       "package.json",
-      "!node_modules/@img/sharp*",
-      "!**/node_modules/@img/sharp*",
-      "!**/node_modules/@img/sharp*"
+      "!node_modules/@img/sharp*"
     ],
     "directories": {
       "output": "dist"
     },
     "win": {
-      "target": [
-        "nsis"
-      ]
+      "target": ["nsis"]
     },
-    "extraResources": [
-    {
-      "from": "out",
-      "to": "out"
-    }
-  ],
     "nsis": {
       "oneClick": false,
       "perMachine": false
@@ -49,7 +40,8 @@
       {
         "provider": "github",
         "owner": "Shivam8299",
-        "repo": "electron_auto_updater"
+        "repo": "electron_auto_updater",
+        "releaseType": "release"
       }
     ]
   },
@@ -60,6 +52,7 @@
     "electron-is-dev": "^3.0.1",
     "electron-updater": "^6.6.2",
     "next": "15.5.2",
+    "next-electron-server": "^1.0.0",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
