@@ -6,25 +6,27 @@
   "author": "Shivam Mishra",
   "private": true,
   "scripts": {
-    "dev:web": "next dev",
-    "dev:electron": "electron .",
-    "dev": "concurrently \"npm:dev:web\" \"wait-on http://localhost:3000 && npm:dev:electron\"",
-    "build:web": "next build",
-    "build": "npm run build:web",
-    "dist": "npm run build && electron-builder --publish=never",
-    "release": "npm run build && electron-builder --publish=always",
-    "postinstall": "rimraf node_modules/sharp"
-  },
+  "dev:web": "next dev",
+  "dev:electron": "electron .",
+  "dev": "concurrently \"npm:dev:web\" \"wait-on http://localhost:3000 && npm:dev:electron\"",
+  "build:web": "next build",
+  "build": "npm run build:web",
+  "dist": "npm run build && electron-builder --publish=never",
+  "release": "npm run build && electron-builder --publish=always"
+},
   "build": {
     "appId": "shivam.myapp",
+     "asarUnpack": [
+    "!**/@img/sharp*"
+  ],
     "productName": "MyApp",
     "files": [
-      ".next/**/*",
-      "public/**/*",
-      "preload.js",
-      "main.js",
-      "package.json",
-      "!node_modules/@img/sharp*"
+     "out/**/*",
+    "preload.js",
+    "main.js",
+    "package.json",
+    "!node_modules/@img/sharp*",
+    "!**/node_modules/@img/sharp*"
     ],
     "directories": {
       "output": "dist"

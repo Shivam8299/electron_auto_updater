@@ -1,53 +1,8 @@
-// // main.js
-// const { app, BrowserWindow } = require("electron");
-// const path = require("path");
-// const isDev = require("electron-is-dev");
-// const { createServer } = require("next-electron-server");
-
-// let win;
-
-// async function createWindow() {
-//   // Create browser window
-//   win = new BrowserWindow({
-//     width: 1200,
-//     height: 800,
-//     webPreferences: {
-//       preload: path.join(__dirname, "preload.js"),
-//       contextIsolation: true,
-//       nodeIntegration: false,
-//     },
-//   });
-
-//   if (isDev) {
-//     // Dev mode: connect to Next.js dev server
-//     await win.loadURL("http://localhost:3000");
-//     win.webContents.openDevTools();
-//   } else {
-//     // Production: serve Next.js using next-electron-server
-//     const handler = await createServer({
-//       dir: __dirname,
-//       dev: false,
-//       protocol: "app", // custom protocol for packaged app
-//     });
-
-//     win.loadURL("app://-");
-//   }
-// }
-
-// app.whenReady().then(createWindow);
-
-// app.on("window-all-closed", () => {
-//   if (process.platform !== "darwin") app.quit();
-// });
-
-// app.on("activate", () => {
-//   if (BrowserWindow.getAllWindows().length === 0) createWindow();
-// });
-
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const isDev = require("electron-is-dev");
 const { autoUpdater } = require("electron-updater");
+const { spawn } = require("child_process");
 
 let win;
 
@@ -63,21 +18,38 @@ function createWindow() {
   });
 
   if (isDev) {
-    win.loadURL("http://localhost:3000");
-    win.webContents.openDevTools();
+    // Dev mode: start Next.js server automatically
+    const nextProcess = spawn("npm", ["run", "dev:web"], { shell: true });
+
+    nextProcess.stdout.on("data", (data) => {
+      console.log(`Next.js: ${data}`);
+    });
+
+    nextProcess.stderr.on("data", (data) => {
+      console.error(`Next.js Error: ${data}`);
+    });
+
+    // Wait for server to start
+    setTimeout(() => {
+      win.loadURL("http://localhost:3000");
+      win.webContents.openDevTools(); // DevTools only in dev
+    }, 5000);
   } else {
-    win.loadURL("http://localhost:3000");
+    // Production: load static export
+    const indexPath = path.join(__dirname, "out", "index.html");
+    console.log("Loading production file:", indexPath);
+    win.loadFile(indexPath);
   }
 }
 
-// IPC listener for renderer request
+// IPC listener for auto-updater
 ipcMain.on("install-update", () => {
   autoUpdater.quitAndInstall();
 });
 
 // Auto update events
 function initAutoUpdates() {
-  if (isDev) return;
+  if (isDev) return; // Only production
 
   autoUpdater.on("checking-for-update", () =>
     win.webContents.send("update-message", { status: "checking" })
@@ -106,7 +78,17 @@ function initAutoUpdates() {
   autoUpdater.checkForUpdatesAndNotify();
 }
 
+// App lifecycle
 app.whenReady().then(() => {
   createWindow();
   initAutoUpdates();
 });
+
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") app.quit();
+});
+
+app.on("activate", () => {
+  if (BrowserWindow.getAllWindows().length === 0) createWindow();
+});
+
