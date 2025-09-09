@@ -1,23 +1,71 @@
 {
   "name": "electron_updater",
+  "main": "main.js",
   "version": "0.1.0",
+  "description": "Electron + Next.js app with auto-updater",
+  "author": "Shivam Mishra",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "dev:web": "next dev",
+    "dev:electron": "electron .",
+    "dev": "concurrently \"npm:dev:web\" \"wait-on http://localhost:3000 && npm:dev:electron\"",
+    "build:web": "next build",
+    "build": "npm run build:web",
+    "dist": "npm run build && electron-builder --publish=never",
+    "release": "npm run build && electron-builder --publish=always",
+    "postinstall": "rimraf node_modules/sharp"
+  },
+  "build": {
+    "appId": "shivam.myapp",
+    "productName": "MyApp",
+    "files": [
+      "out/**/*",
+      "main.js",
+      "package.json",
+      "!node_modules/@img/sharp*",
+      "!**/node_modules/@img/sharp*",
+      "!**/node_modules/@img/sharp*"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Shivam8299",
+        "repo": "electron_auto_updater"
+      }
+    ]
+  },
+  "overrides": {
+    "sharp": false
   },
   "dependencies": {
+    "electron-is-dev": "^3.0.1",
+    "electron-updater": "^6.6.2",
+    "next": "15.5.2",
     "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "next": "15.5.2"
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
+    "concurrently": "^9.0.0",
+    "electron": "^38.0.0",
+    "electron-builder": "^26.0.12",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
-    "@eslint/eslintrc": "^3"
+    "rimraf": "^6.0.1",
+    "tailwindcss": "^4",
+    "wait-on": "^7.0.1"
   }
 }
