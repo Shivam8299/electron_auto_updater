@@ -19,7 +19,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-gray-100  font-sans">
+    <div className="h-screen flex flex-col items-center justify-center border bg-gray-100  font-sans">
       <h1 className="text-3xl font-bold mb-6"> My Electron App</h1>
 
       {updateStatus === "idle" && (

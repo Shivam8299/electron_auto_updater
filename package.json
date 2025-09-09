@@ -1,7 +1,7 @@
 {
   "name": "electron_updater",
   "main": "main.js",
-  "version": "0.3.5",
+  "version": "0.3.7",
   "description": "Electron + Next.js app with auto-updater",
   "author": "Shivam Mishra",
   "private": true,
